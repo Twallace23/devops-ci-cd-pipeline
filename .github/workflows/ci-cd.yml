@@ -2,23 +2,28 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Build Docker image
-      run: docker build -t devops-app -f docker/Dockerfile .
+      - name: Build Docker image
+        run: docker build -t devops-app -f docker/Dockerfile .
 
-    - name: Run container test
-      run: |
-        docker run -d -p 5000:5000 --name test-app devops-app
-        sleep 10
-        docker logs test-app
-        curl --fail http://localhost:5000
-        docker stop test-app
+      - name: Run container test
+        run: |
+          docker run -d -p 5000:5000 --name test-app devops-app
+          sleep 10
+          docker logs test-app
+          curl --fail http://localhost:5000
+          docker stop test-app
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f test-app || true
