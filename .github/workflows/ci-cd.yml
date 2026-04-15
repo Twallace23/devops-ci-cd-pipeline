@@ -23,6 +23,7 @@ jobs:
           docker logs test-app
           curl --fail http://localhost:5000
           docker stop test-app
+
           
       - name: Cleanup
         if: always()
